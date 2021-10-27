@@ -68,3 +68,24 @@ server.post('/patients', (req,res) => {
         res.send(400, "One or more fields are missing values")
     }
 })
+
+server.get('/patients/:id', async (req,res) => {
+    try {
+        const patientId = req.params?.id;
+        if (patientId) {
+            var patient = await Patient.findById(patientId);
+            if (patient) {
+                return res.send(200, patient);
+            }
+            else {
+                return res.send(404, 'Could not find a patient with this ID.');
+            }
+        }
+        else {
+            return res.send(400, 'Patient ID is required.');
+        }
+    }
+    catch (err) {
+        return res.send(500, `There was an error finding the patient. ${err}`);
+    }
+})
