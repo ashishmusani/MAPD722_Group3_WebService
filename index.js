@@ -111,8 +111,8 @@ server.post('/patients/:id/tests', (req,res) => {
         }
         var patient = Patient.findById(patientId, (err, patient) => {
             if(err){
-                return res.send(404, 'Could not find a patient with this ID.');
-            } else {
+                return res.send(500, err);
+            } else if (patient){
                 const {date, time, typeOfData, value} = req.body;
                 if(date && time && typeOfData && value){
                     var newTest = new Test({
@@ -133,6 +133,8 @@ server.post('/patients/:id/tests', (req,res) => {
                     res.send(400, "One or more fields are missing values")
                 }
 
+            } else {
+                return res.send(404, "Could not find a patient with this ID.");
             }
         });
     } else {
@@ -141,3 +143,57 @@ server.post('/patients/:id/tests', (req,res) => {
 })
 
 //  View Tests for a Patient
+server.get('/patients/:id/tests', (req,res) => {
+    const patientId = req.params?.id;
+    if(patientId){
+        var patient = Patient.findById(patientId, (err, patient) => {
+            if(err){
+                return res.send(500, err);
+            } else if (patient){
+                Test.find({patientId: patientId}, (err, tests) => {
+                    if(err){
+                        return res.send(500, err);
+                    } else {
+                        res.send(200, tests);
+                    }
+                })
+            } else {
+                return res.send(404, "Could not find a patient with this ID.");
+            }
+        });
+    } else {
+        return res.send(400, 'Patient ID is required.');
+    }
+});
+
+//  Delete Patient Info
+server.del('/patients/:id', (req,res) => {
+    const patientId = req.params?.id;
+    if(patientId){
+        var patient = Patient.findById(patientId, (err, patient) => {
+            if(err){
+                return res.send(500, err);
+            } else if(patient){
+                Test.deleteMany({patientId: patientId}, (err) => {
+                    if(err){
+                        res.send(500, "There was some problem fulfilling the request. Please try again.");
+                        return;
+                    } else {
+                        Patient.deleteOne({_id: patientId}, (err) => {
+                            if(err){
+                                res.send(500, "There was some problem fulfilling the request. Please try again.");
+                                return;
+                            } else {
+                                res.send(200, "Patient successfully deleted")
+                            }        
+                        })
+                    }
+                })
+            } else {
+                return res.send(404, "Could not find a patient with this ID."); 
+            }
+        });
+    } else {
+        return res.send(400, 'Patient ID is required.');
+    }
+})
