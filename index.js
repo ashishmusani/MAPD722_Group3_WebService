@@ -34,7 +34,7 @@ var server = restify.createServer({
 server.listen(PORT, () => {
     console.log("Server %s is listening on port %s", server.name, PORT);
     console.log("========Resources========");
-    console.log("/patients   [GET,POST, DELETE]");
+    console.log("/patients   [GET,POST,DELETE]");
     console.log("/patients/:id   [GET]");
     console.log("/patients/:id/tests   [GET,POST]");
     console.log("=========================")
