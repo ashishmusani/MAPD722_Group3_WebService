@@ -1,7 +1,7 @@
 const restify = require('restify');
 const mongoose = require('mongoose');
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 mongoose.connect('mongodb://localhost:27017/MAPD713', {useNewUrlParser: true});
 const db = mongoose.connection;
@@ -199,4 +199,4 @@ server.del('/patients/:id', (req,res) => {
 })
 
 //Exports
-module.exports = server;
+module.exports = {server, db};

@@ -1,9 +1,20 @@
-const server = require("../index");
+const {server, db} = require("../index");
 const request = require('supertest');
 
 var newPatientId;
 
 describe('Backend test', function() {
+    beforeAll(done => {
+        done()
+    })
+    
+    afterAll(done => {
+        // Closing the DB connection allows Jest to exit successfully.
+        db.close()
+        server.close()
+        done()
+    })
+
     // test route for posting new patient
     it('post patient', async () => {
         var newPatient = {
@@ -106,6 +117,4 @@ describe('Backend test', function() {
         console.log("del patient response.body: ", response.body);
         expect(response.status).toEqual(200);
     });
-    
-    // afterAll(() => mongoose.disconnect());
 });
