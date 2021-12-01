@@ -46,7 +46,7 @@ server.use(restify.plugins.bodyParser());
 server.get('/patients', (req,res) => {
     Patient.find({}, (err, patients) => {
         console.log(patients)
-        res.send(patients)
+        res.send(patients).end()
     })
 })
 
@@ -197,3 +197,6 @@ server.del('/patients/:id', (req,res) => {
         return res.send(400, 'Patient ID is required.');
     }
 })
+
+//Exports
+module.exports = server;
