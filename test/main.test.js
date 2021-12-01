@@ -49,6 +49,7 @@ describe('Backend test', function() {
         console.log("get patients response.body: ", response.body);
         expect(response.status).toEqual(200);
         expect(response.body.length).not.toBe(0);
+        expect(response.body.length).toBeGreaterThan(0);
     });
     
     // test route for getting patient by id
@@ -72,6 +73,16 @@ describe('Backend test', function() {
         .expect(200)
 
         console.log("get patient by id response.body: ", response.body);
+        
+        if (newPatientId) {
+            expect(response.body.firstName).toBe("firstName")
+            expect(response.body.lastName).toBe("lastName")
+            expect(response.body.address).toBe("address")
+            expect(response.body.age).toBe(30)
+            expect(response.body.birthDate).toBe("birthDate")
+            expect(response.body.department).toBe("department")
+            expect(response.body.doctor).toBe("doctor")
+        }
     })
 
     // test route for posting test by patient id
@@ -91,7 +102,7 @@ describe('Backend test', function() {
         .expect('Content-Type', /json/)
         .expect(201)
 
-        console.log("post test response: ", response);
+        console.log("post test response.body: ", response.body);
         expect(response.body.value).toEqual("value")
         expect(response.body.typeOfData).toEqual("typeOfData")
         expect(response.body.time).toEqual("time")        
@@ -100,11 +111,15 @@ describe('Backend test', function() {
     // test route for getting tests by patient id
     it('get test by patient id', async () => {
         var response = await request(server)
-        .get(`/patients/${newPatientId}`)
+        .get(`/patients/${newPatientId}/tests`)
         .expect('Content-Type', /json/)
         .expect(200)
 
-        console.log("get patient by id response.body: ", response.body);
+        console.log("get test by patient id response.body: ", response.body);
+        expect(response.body[0].patientId).toBe(newPatientId)
+        expect(response.body[0].time).toBe("time")
+        expect(response.body[0].typeOfData).toBe("typeOfData")
+        expect(response.body[0].value).toBe("value")
     })
 
     // test route for deleting patient by id
