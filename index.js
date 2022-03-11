@@ -1,5 +1,6 @@
 const restify = require('restify');
 const mongoose = require('mongoose');
+const cors=require('cors');
 
 const PORT = process.env.PORT || 5000;
 
@@ -29,7 +30,7 @@ var testSchema = new mongoose.Schema({
 var Test = mongoose.model('Test', testSchema)
 
 var server = restify.createServer({
-    name: "'Health Records (MAPD713-Milestone2)'"
+    name: "'Health Records'"
 });
 server.listen(PORT, () => {
     console.log("Server %s is listening on port %s", server.name, PORT);
@@ -41,6 +42,7 @@ server.listen(PORT, () => {
 })
 server.use(restify.plugins.fullResponse());
 server.use(restify.plugins.bodyParser());
+server.use(cors());
 
 //  List All Patient Info
 server.get('/patients', (req,res) => {
@@ -82,7 +84,7 @@ server.post('/patients', (req,res) => {
 //  View Patient Info
 server.get('/patients/:id', async (req,res) => {
     try {
-        const patientId = req.params?.id;
+        const patientId = req.params.id;
         if (patientId) {
             var patient = await Patient.findById(patientId);
             if (patient) {
@@ -103,7 +105,7 @@ server.get('/patients/:id', async (req,res) => {
 
 //  Add Test for a Patient
 server.post('/patients/:id/tests', (req,res) => {
-    const patientId = req.params?.id;
+    const patientId = req.params.id;
     if(patientId){
         if(!req.body){
             res.send(400, "Required data missing in request body")
@@ -144,7 +146,7 @@ server.post('/patients/:id/tests', (req,res) => {
 
 //  View Tests for a Patient
 server.get('/patients/:id/tests', (req,res) => {
-    const patientId = req.params?.id;
+    const patientId = req.params.id;
     if(patientId){
         var patient = Patient.findById(patientId, (err, patient) => {
             if(err){
@@ -168,7 +170,7 @@ server.get('/patients/:id/tests', (req,res) => {
 
 //  Delete Patient Info
 server.del('/patients/:id', (req,res) => {
-    const patientId = req.params?.id;
+    const patientId = req.params.id;
     if(patientId){
         var patient = Patient.findById(patientId, (err, patient) => {
             if(err){
